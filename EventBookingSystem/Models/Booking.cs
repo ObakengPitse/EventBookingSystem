@@ -13,15 +13,15 @@ namespace EventBookingSystem.Models
        
         public int VenueId { get; set; }
         
-        public int UserId { get; set; }
+        public int CustomerId { get; set; }
         [Required]
         public DateTime BookingDate { get; set; }
         [ForeignKey("EventId")]
         public required Event Event { get; set; }
         [ForeignKey("VenueId")]
         public required Venue Venue { get; set; }
-        [ForeignKey("UserId")]
-        public required User User { get; set; }
+        [ForeignKey("CustomerId")]
+        public required Customer Customer { get; set; }
         
     }
 }

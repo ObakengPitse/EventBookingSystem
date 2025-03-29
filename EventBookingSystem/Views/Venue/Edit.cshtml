@@ -1,0 +1,44 @@
+﻿@model EventBookingSystem.Models.Venue
+
+@{
+
+    ViewData["Title"] = "Edit Venue";
+
+}
+
+<h1>Edit Venue</h1>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="VenueID">Venue ID</label>
+        <input asp-for="VenueId" class="form-control" readonly />
+        <span asp-validation-for="VenueId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="VenueName">Venue Name</label>
+        <input asp-for="VenueName" class="form-control" />
+        <span asp-validation-for="VenueName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Location">Location</label>
+        <input asp-for="Location" class="form-control" />
+        <span asp-validation-for="Location" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Capacity">Capacity</label>
+        <input asp-for="Capacity" class="form-control" />
+        <span asp-validation-for="Capacity" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="ImageUrl">Image URL</label>
+        <input asp-for="ImageUrl" class="form-control" />
+        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+</form>
+
+<a href="@Url.Action("Index", "Venue")">Back to Venue List</a>
+

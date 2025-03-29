@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventBookingSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250326195443_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250329160602_BookingSystem")]
+    partial class BookingSystem
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,10 +36,10 @@ namespace EventBookingSystem.Migrations
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EventId")
+                    b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("EventId")
                         .HasColumnType("int");
 
                     b.Property<int>("VenueId")
@@ -47,13 +47,34 @@ namespace EventBookingSystem.Migrations
 
                     b.HasKey("BookingId");
 
-                    b.HasIndex("EventId");
+                    b.HasIndex("CustomerId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("EventId");
 
                     b.HasIndex("VenueId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Booking");
+                });
+
+            modelBuilder.Entity("EventBookingSystem.Models.Customer", b =>
+                {
+                    b.Property<int>("CustomerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullNames")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CustomerId");
+
+                    b.ToTable("Customer");
                 });
 
             modelBuilder.Entity("EventBookingSystem.Models.Event", b =>
@@ -82,28 +103,7 @@ namespace EventBookingSystem.Migrations
 
                     b.HasIndex("VenueId");
 
-                    b.ToTable("Events");
-                });
-
-            modelBuilder.Entity("EventBookingSystem.Models.User", b =>
-                {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
-
-                    b.Property<string>("EmailAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullNames")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("Users");
+                    b.ToTable("Event");
                 });
 
             modelBuilder.Entity("EventBookingSystem.Models.Venue", b =>
@@ -131,20 +131,20 @@ namespace EventBookingSystem.Migrations
 
                     b.HasKey("VenueId");
 
-                    b.ToTable("Venues");
+                    b.ToTable("Venue");
                 });
 
             modelBuilder.Entity("EventBookingSystem.Models.Booking", b =>
                 {
-                    b.HasOne("EventBookingSystem.Models.Event", "Event")
+                    b.HasOne("EventBookingSystem.Models.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("EventId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EventBookingSystem.Models.User", "User")
+                    b.HasOne("EventBookingSystem.Models.Event", "Event")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -154,9 +154,9 @@ namespace EventBookingSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Event");
+                    b.Navigation("Customer");
 
-                    b.Navigation("User");
+                    b.Navigation("Event");
 
                     b.Navigation("Venue");
                 });

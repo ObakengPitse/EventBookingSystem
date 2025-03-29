@@ -3,14 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EventBookingSystem.Models
 {
-    public class User
+    public class Customer
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int UserId { get; set; }
+        public int CustomerId { get; set; }
         [Required]
-        public required string FullNames { get; set; }
+        public required string FullName { get; set; }
         [Required]
-        public required string EmailAddress { get; set; }
+        public required string Email { get; set; }
     }
 }

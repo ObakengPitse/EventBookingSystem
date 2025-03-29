@@ -13,10 +13,10 @@ namespace EventBookingSystem.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<Venue> Venues { get; set; }
-        public DbSet<Event> Events { get; set; }
-        public DbSet<Booking> Bookings { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<Venue> Venue { get; set; }
+        public DbSet<Event> Event { get; set; }
+        public DbSet<Booking> Booking { get; set; }
+        public DbSet<Customer> Customer { get; set; }
     }
 }
 
