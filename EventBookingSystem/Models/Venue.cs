@@ -16,6 +16,6 @@ namespace EventBookingSystem.Models
         public required int Capacity { get; set; }
         [Required]
         public required string ImageUrl { get; set; }
-
+     
     }
 }

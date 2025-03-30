@@ -61,11 +61,11 @@ namespace EventBookingSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
 
-                    b.Property<string>("EmailAddress")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FullNames")
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -161,12 +161,17 @@ namespace EventBookingSystem.Migrations
             modelBuilder.Entity("EventBookingSystem.Models.Event", b =>
                 {
                     b.HasOne("EventBookingSystem.Models.Venue", "Venue")
-                        .WithMany()
+                        .WithMany("Event")
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Venue");
+                });
+
+            modelBuilder.Entity("EventBookingSystem.Models.Venue", b =>
+                {
+                    b.Navigation("Event");
                 });
 #pragma warning restore 612, 618
         }

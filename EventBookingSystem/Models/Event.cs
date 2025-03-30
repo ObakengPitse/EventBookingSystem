@@ -8,15 +8,15 @@ namespace EventBookingSystem.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int EventId { get; set; }
-        public int VenueId { get; set; }
+        public required int VenueId { get; set; }
         [ForeignKey("VenueId")]
         public required Venue Venue { get; set; }
         [Required]
         public required string EventName { get; set; }
-        [Required]
+        [DataType(DataType.DateTime)]
         public required DateTime EventDate { get; set; }
         [Required]
         public required string Description { get; set; }
-
+      
     }
 }

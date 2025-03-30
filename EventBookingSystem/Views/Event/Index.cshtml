@@ -1,0 +1,35 @@
+﻿@model IEnumerable<EventBookingSystem.Models.Event>
+
+<h2>Events</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Event Name</th>
+            <th>Event Date</th>
+            <th>Venue Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+
+        {
+            <tr>
+                <td>@item.EventName</td>
+                <td>@item.EventDate.ToString("dd/MM/yyyy")</td>
+                <td>@item.Venue.VenueName</td>
+                <td>@item.Description</td>
+                <td>
+                    <a href="@Url.Action("Edit", "Event", new { id = item.EventId })">Edit</a> |
+                    <a href="@Url.Action("Delete", "Event", new { id = item.EventId })">Delete</a>
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create", "Event")">Create New Event</a>
