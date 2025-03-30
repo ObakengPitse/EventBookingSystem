@@ -161,17 +161,12 @@ namespace EventBookingSystem.Migrations
             modelBuilder.Entity("EventBookingSystem.Models.Event", b =>
                 {
                     b.HasOne("EventBookingSystem.Models.Venue", "Venue")
-                        .WithMany("Event")
+                        .WithMany()
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Venue");
-                });
-
-            modelBuilder.Entity("EventBookingSystem.Models.Venue", b =>
-                {
-                    b.Navigation("Event");
                 });
 #pragma warning restore 612, 618
         }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventBookingSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250330120327_BookingSystem")]
+    [Migration("20250330210009_BookingSystem")]
     partial class BookingSystem
     {
         /// <inheritdoc />
@@ -164,17 +164,12 @@ namespace EventBookingSystem.Migrations
             modelBuilder.Entity("EventBookingSystem.Models.Event", b =>
                 {
                     b.HasOne("EventBookingSystem.Models.Venue", "Venue")
-                        .WithMany("Event")
+                        .WithMany()
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Venue");
-                });
-
-            modelBuilder.Entity("EventBookingSystem.Models.Venue", b =>
-                {
-                    b.Navigation("Event");
                 });
 #pragma warning restore 612, 618
         }
