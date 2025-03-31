@@ -4,13 +4,13 @@
     ViewData["Title"] = "Customer List";
 }
 
-<h1>Customer List</h1>
+<h1>Customers</h1>
 
-<p>
-    <a href="@Url.Action("Create", "Customer")" class="btn btn-primary">Create New Customer</a>
-</p>
 
-<table class="table">
+<a asp-action="Create" class="btn btn-primary mb-2">Add New Customer</a>
+
+<!-- Booking List Table -->
+<table class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>Full Name</th>
@@ -32,3 +32,5 @@
         }
     </tbody>
 </table>
+
+

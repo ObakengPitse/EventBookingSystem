@@ -1,5 +1,14 @@
 ﻿@model EventBookingSystem.Models.Booking
 
+
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <h1>Create Booking</h1>
 
 <form asp-action="Create" method="post">
@@ -23,7 +32,7 @@
 
     <div class="form-group">
         <label asp-for="BookingDate" class="control-label"></label>
-        <input asp-for="BookingDate" class="form-control" type="datetime-local" />
+        <input asp-for="BookingDate" class="form-control" type="date" />
         <span asp-validation-for="BookingDate" class="text-danger"></span>
     </div>
 

@@ -4,9 +4,12 @@
     ViewData["Title"] = "All Venues";
 }
 
-<h1>All Venues</h1>
+<h1>Venues</h1>
 
-<table class="table table-striped">
+<!-- Button to Create New Venue -->
+<a asp-action="Create" class="btn btn-primary mb-2">Add New Venue</a>
+
+<table class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>Venue Name</th>
@@ -34,7 +37,7 @@
                     }
                 </td>
                 <td>
-                    <a href="@Url.Action("Edit", "Venue", new { id = venue.VenueId })" class="btn btn-warning">Edit</a>
+                    <a href="@Url.Action("Edit", "Venue", new { id = venue.VenueId })" class="btn btn-primary">Edit</a>
                     <a href="@Url.Action("Delete", "Venue", new { id = venue.VenueId })" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
@@ -42,4 +45,3 @@
     </tbody>
 </table>
 
-<a href="@Url.Action("Create", "Venue")" class="btn btn-success">Add New Venue</a>

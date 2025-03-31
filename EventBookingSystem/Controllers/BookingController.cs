@@ -45,7 +45,12 @@ public class BookingController : Controller
 
         if (conflictingBooking != null)
         {
-            throw new ArgumentException("Booking Conflict"); 
+            // Using TempData to pass the error message to the view
+            TempData["ErrorMessage"] = "This venue is already booked for the selected date and time.";
+            ViewData["EventId"] = new SelectList(_context.Event, "EventId", "EventName");
+            ViewData["VenueId"] = new SelectList(_context.Venue, "VenueId", "VenueName");
+            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "FullName"); // Fixed Customer dropdown
+            return View(booking);
         }
 
         _context.Add(booking);
@@ -90,18 +95,35 @@ public class BookingController : Controller
 
         try
         {
-            // Check for booking conflicts after editing
+            // Check for booking conflicts Event after editing
             var conflictingBooking = await _context.Booking
                 .Include(b => b.Event)
                 .Where(b => b.VenueId == booking.VenueId && b.Event.EventDate.Date == booking.BookingDate.Date && b.BookingId != booking.BookingId)
                 .FirstOrDefaultAsync();
 
+            // Check for booking same venue on the same date conflicts after editing
+            var conflictingBookingVenue = await _context.Booking
+                .Include(b => b.Event)
+                .FirstOrDefaultAsync(b => b.VenueId == booking.VenueId && b.BookingDate.Date == booking.BookingDate.Date && b.BookingId != booking.BookingId);
+
             if (conflictingBooking != null)
             {
-                ModelState.AddModelError("", "This venue is already booked for the selected date.");
-                ViewData["EventId"] = new SelectList(_context.Event, "EventId", "EventName", booking.EventId);
-                ViewData["VenueId"] = new SelectList(_context.Venue, "VenueId", "VenueName", booking.VenueId);
-                ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "FullName", booking.CustomerId);
+                // Using TempData to pass the error message to the view
+                TempData["ErrorMessage"] = "There's an event happening in the day you are trying to book the venue!";
+                ViewData["EventId"] = new SelectList(_context.Event, "EventId", "EventName");
+                ViewData["VenueId"] = new SelectList(_context.Venue, "VenueId", "VenueName");
+                ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "FullName");
+                return View(booking);
+            }
+
+
+            if (conflictingBookingVenue != null)
+            {
+                // Using TempData to pass the error message to the view
+                TempData["ErrorMessage"] = "This venue is already booked for the selected date and time!";
+                ViewData["EventId"] = new SelectList(_context.Event, "EventId", "EventName");
+                ViewData["VenueId"] = new SelectList(_context.Venue, "VenueId", "VenueName");
+                ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "FullName");
                 return View(booking);
             }
 

@@ -4,6 +4,13 @@
     ViewData["Title"] = "Edit Booking";
 }
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <h1>Edit Booking</h1>
 
 <form asp-action="Edit" method="post">
@@ -29,9 +36,9 @@
 
     <div class="form-group">
         <label asp-for="BookingDate" class="control-label"></label>
-        <input asp-for="BookingDate" class="form-control" type="datetime-local" />
+        <input asp-for="BookingDate" class="form-control" type="date" />
     </div>
 
-    <button type="submit" class="btn btn-primary">Update Booking</button>
-    <a href="@Url.Action("Index", "Booking")" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary mt-2">Update Booking</button>
+    <a href="@Url.Action("Index", "Booking")" class="btn btn-secondary mt-2">Cancel</a>
 </form>
