@@ -25,7 +25,7 @@
                     <td>@booking.Customer.FullName</td>
                     <td>@booking.Event.EventName</td>
                     <td>@booking.Venue.VenueName</td>
-                    <td>@booking.BookingDate.ToString("dd-MM-yyyy")</td>
+                    <td>@booking.BookingDate.ToString("dd/MM/yyyy")</td>
                     <td>
                         <a href="@Url.Action("Edit", "Booking", new { id = booking.BookingId })" class="btn btn-primary">Edit</a>
                         <a href="@Url.Action("Delete", "Booking", new { id = booking.BookingId })" class="btn btn-danger">Delete</a>

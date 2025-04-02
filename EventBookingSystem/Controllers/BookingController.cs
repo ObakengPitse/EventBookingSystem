@@ -37,22 +37,52 @@ public class BookingController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([Bind("BookingId,EventId,VenueId,CustomerId,BookingDate")] Booking booking)
     {
-        // Check for conflicts in bookings for the same venue and event date
-        var conflictingBooking = await _context.Booking
+        // Check for booking conflicts Event Create
+        var conflictingBooking = await _context.Event
+            .Where(b => b.VenueId == booking.VenueId && b.EventDate.Date == booking.BookingDate.Date)
+            .FirstOrDefaultAsync();
+
+        // Check for booking same venue on the same date conflicts Create
+        var conflictingBookingVenue = await _context.Booking
             .Include(b => b.Event)
-            .Where(b => b.VenueId == booking.VenueId && b.Event.EventDate == booking.BookingDate)
+            .FirstOrDefaultAsync(b => b.VenueId == booking.VenueId && b.BookingDate.Date == booking.BookingDate.Date && b.BookingId != booking.BookingId);
+
+        // Check for booking conflicts same customer same date Create
+        var conflictingBookingCustomer = await _context.Booking
+            .Where(b => b.CustomerId == booking.CustomerId && b.BookingDate.Date == booking.BookingDate.Date)
             .FirstOrDefaultAsync();
 
         if (conflictingBooking != null)
         {
             // Using TempData to pass the error message to the view
-            TempData["ErrorMessage"] = "This venue is already booked for the selected date and time.";
+            TempData["ErrorMessage"] = "There's an event already happening on the day you are trying to book the venue!";
             ViewData["EventId"] = new SelectList(_context.Event, "EventId", "EventName");
             ViewData["VenueId"] = new SelectList(_context.Venue, "VenueId", "VenueName");
-            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "FullName"); // Fixed Customer dropdown
+            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "FullName");
             return View(booking);
         }
 
+        if (conflictingBookingVenue != null)
+        {
+            // Using TempData to pass the error message to the view
+            TempData["ErrorMessage"] = "This venue is already booked for the selected date and time!";
+            ViewData["EventId"] = new SelectList(_context.Event, "EventId", "EventName");
+            ViewData["VenueId"] = new SelectList(_context.Venue, "VenueId", "VenueName");
+            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "FullName");
+            return View(booking);
+        }
+
+        if (conflictingBookingCustomer != null)
+        {
+            // Using TempData to pass the error message to the view
+            TempData["ErrorMessage"] = "Customer cannot have multiple bookings for the same date!";
+            ViewData["EventId"] = new SelectList(_context.Event, "EventId", "EventName");
+            ViewData["VenueId"] = new SelectList(_context.Venue, "VenueId", "VenueName");
+            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "FullName");
+            return View(booking);
+        }
+
+        // create booking if no conflicts
         _context.Add(booking);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
@@ -96,15 +126,19 @@ public class BookingController : Controller
         try
         {
             // Check for booking conflicts Event after editing
-            var conflictingBooking = await _context.Booking
-                .Include(b => b.Event)
-                .Where(b => b.VenueId == booking.VenueId && b.Event.EventDate.Date == booking.BookingDate.Date && b.BookingId != booking.BookingId)
+            var conflictingBooking = await _context.Event
+                .Where(b => b.VenueId == booking.VenueId && b.EventDate.Date == booking.BookingDate.Date)
                 .FirstOrDefaultAsync();
 
             // Check for booking same venue on the same date conflicts after editing
             var conflictingBookingVenue = await _context.Booking
                 .Include(b => b.Event)
                 .FirstOrDefaultAsync(b => b.VenueId == booking.VenueId && b.BookingDate.Date == booking.BookingDate.Date && b.BookingId != booking.BookingId);
+
+            // Check for booking conflicts same customer same date after editing
+            var conflictingBookingCustomer = await _context.Booking
+                .Where(b => b.CustomerId == booking.CustomerId && b.BookingDate.Date == booking.BookingDate.Date)
+                .FirstOrDefaultAsync();
 
             if (conflictingBooking != null)
             {
@@ -121,6 +155,16 @@ public class BookingController : Controller
             {
                 // Using TempData to pass the error message to the view
                 TempData["ErrorMessage"] = "This venue is already booked for the selected date and time!";
+                ViewData["EventId"] = new SelectList(_context.Event, "EventId", "EventName");
+                ViewData["VenueId"] = new SelectList(_context.Venue, "VenueId", "VenueName");
+                ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "FullName");
+                return View(booking);
+            }
+
+            if (conflictingBookingCustomer != null)
+            {
+                // Using TempData to pass the error message to the view
+                TempData["ErrorMessage"] = "Customer cannot have multiple bookings for the same date!";
                 ViewData["EventId"] = new SelectList(_context.Event, "EventId", "EventName");
                 ViewData["VenueId"] = new SelectList(_context.Venue, "VenueId", "VenueName");
                 ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "FullName");
@@ -173,6 +217,7 @@ public class BookingController : Controller
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var booking = await _context.Booking.FindAsync(id);
+
         _context.Booking.Remove(booking);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));

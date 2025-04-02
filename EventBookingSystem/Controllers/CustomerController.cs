@@ -1,6 +1,7 @@
 ﻿using EventBookingSystem.Data;
 using EventBookingSystem.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventBookingSystem.Controllers
@@ -113,11 +114,26 @@ namespace EventBookingSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var customer = await _context.Customer.FindAsync(id);
+
+            // Check for booking that is associated with the customer before delete
+            if (customer != null) { 
+                var conflictingBooking = await _context.Booking
+                    .FirstOrDefaultAsync(b => b.CustomerId == customer.CustomerId);
+
+                if (conflictingBooking != null)
+                {
+                    // Using TempData to pass the error message to the view
+                    TempData["ErrorMessage"] = "Cannot delete a customer that is associated with a booking";
+                    return View(customer);
+                }
+            }
+            
             if (customer != null)
             {
                 _context.Customer.Remove(customer);
                 await _context.SaveChangesAsync();
             }
+            
             return RedirectToAction(nameof(Index));
         }
 

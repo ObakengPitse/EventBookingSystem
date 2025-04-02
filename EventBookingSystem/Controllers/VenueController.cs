@@ -112,6 +112,21 @@ namespace EventBookingSystem.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var venue = await _context.Venue.FindAsync(id);
+
+            // Check for venue if it is associated with an event before delete
+            if (venue != null)
+            {
+                var conflictingBooking = await _context.Event
+                    .FirstOrDefaultAsync(b => b.VenueId == venue.VenueId);
+
+                if (conflictingBooking != null)
+                {
+                    // Using TempData to pass the error message to the view
+                    TempData["ErrorMessage"] = "Cannot delete a venue that is associated with an event";
+                    return View(venue);
+                }
+            }
+
             if (venue != null)
             {
                 _context.Venue.Remove(venue);

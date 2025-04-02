@@ -9,23 +9,29 @@
 <form asp-action="Create" method="post">
     <div class="form-group">
         <label for="VenueName">Venue Name</label>
-        <input type="text" class="form-control" id="VenueName" name="VenueName" required />
+        <input type="text" required class="form-control" id="VenueName" name="VenueName" />
+        <span asp-validation-for="VenueName" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group mt-2">
         <label for="Location">Location</label>
-        <input type="text" class="form-control" id="Location" name="Location" required />
+        <input type="text" required class="form-control" id="Location" name="Location" />
+        <span asp-validation-for="Location" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group mt-2">
         <label for="Capacity">Capacity</label>
-        <input type="number" class="form-control" id="Capacity" name="Capacity" required />
+        <input type="number" required class="form-control" id="Capacity" name="Capacity" />
+        <span asp-validation-for="Capacity" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group mt-2">
         <label for="ImageUrl">Image URL</label>
-        <input type="text" class="form-control" id="ImageUrl" name="ImageUrl" />
+        <input type="text" required class="form-control" id="ImageUrl" name="ImageUrl" />
+        <span asp-validation-for="ImageUrl" class="text-danger"></span>
     </div>
-
-    <button href="@Url.Action("Index", "Venue")" type="submit" class="btn btn-primary">Create</button>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary mt-2">Create</button>
+        <a asp-action="Index" class="btn btn-secondary mt-2">Cancel</a>
+    </div>
 </form>

@@ -14,24 +14,24 @@
         <input asp-for="VenueId" class="form-control" readonly />
         <span asp-validation-for="VenueId" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-group mt-2">
         <label for="VenueName">Venue Name</label>
-        <input asp-for="VenueName" class="form-control" />
+        <input asp-for="VenueName" required class="form-control" />
         <span asp-validation-for="VenueName" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-group mt-2">
         <label for="Location">Location</label>
-        <input asp-for="Location" class="form-control" />
+        <input asp-for="Location" required class="form-control" />
         <span asp-validation-for="Location" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-group mt-2">
         <label for="Capacity">Capacity</label>
-        <input asp-for="Capacity" class="form-control" />
+        <input asp-for="Capacity" required class="form-control" />
         <span asp-validation-for="Capacity" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-group mt-2">
         <label for="ImageUrl">Image URL</label>
-        <input asp-for="ImageUrl" class="form-control" />
+        <input asp-for="ImageUrl" required class="form-control" />
         <span asp-validation-for="ImageUrl" class="text-danger"></span>
     </div>
 

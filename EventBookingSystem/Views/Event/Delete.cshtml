@@ -4,6 +4,13 @@
     ViewData["Title"] = "Delete Event";
 }
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <h2>Delete Event</h2>
 
 <div>
@@ -12,15 +19,13 @@
         <dt>Event Name</dt>
         <dd>@Model.EventName</dd>
         <dt>Event Date</dt>
-        <dd>@Model.EventDate.ToString("MM/dd/yyyy hh:mm tt")</dd>
-        <dt>Venue</dt>
-        <dd>@Model.Venue.VenueName</dd>
+        <dd>@Model.EventDate.ToString("dd/MM/yyyy")</dd>
         <dt>Description</dt>
         <dd>@Model.Description</dd>
     </dl>
     <form asp-action="Delete" method="post">
         <input type="hidden" asp-for="EventId" />
-        <button type="submit" class="btn btn-danger">Delete</button>
-        <a href="@Url.Action("Index", "Event")" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-danger mt-2">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary mt-2">Cancel</a>
     </form>
 </div>
