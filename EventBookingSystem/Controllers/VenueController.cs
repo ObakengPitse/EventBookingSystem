@@ -2,6 +2,7 @@
 using EventBookingSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,10 +11,12 @@ namespace EventBookingSystem.Controllers
     public class VenueController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly BlobStorageService _blobStorageService;
 
-        public VenueController(AppDbContext context)
+        public VenueController(AppDbContext context, BlobStorageService blobStorageService)
         {
             _context = context;
+            _blobStorageService = blobStorageService;
         }
 
         // GET: Venue
@@ -112,10 +115,19 @@ namespace EventBookingSystem.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var venue = await _context.Venue.FindAsync(id);
+            
 
             // Check for venue if it is associated with an event before delete
             if (venue != null)
             {
+                var hasBookings = await _context.Booking.AnyAsync(b => b.VenueId == id);
+
+                if (hasBookings)
+                {
+                    TempData["ErrorMessage"] = "Cannot delete this venue as it has active bookings.";
+                    return View(venue);
+                }
+
                 var conflictingBooking = await _context.Event
                     .FirstOrDefaultAsync(b => b.VenueId == venue.VenueId);
 

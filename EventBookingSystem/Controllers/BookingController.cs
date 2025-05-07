@@ -24,6 +24,21 @@ public class BookingController : Controller
         return View(bookings);
     }
 
+    //Search bookings
+    public async Task<IActionResult> SearchBookings(string searchQuery)
+    {
+        var results = await _context.Booking
+            .Include(b => b.Venue)
+            .Include(b => b.Event)
+            .Where(b => b.BookingId.ToString().Contains(searchQuery) ||
+                        b.Event.EventName.Contains(searchQuery) ||
+                        b.Venue.VenueName.Contains(searchQuery))
+            .ToListAsync();
+
+        return View(results);
+    }
+
+
     // GET: Create - Show form to create a new booking
     public IActionResult Create()
     {

@@ -5,10 +5,18 @@
 <!-- Button to Create New Booking -->
 <a asp-action="Create" class="btn btn-primary mb-2">Add New Booking</a>
 
+<form asp-action="SearchBookings" method="get">
+    <div class="mb-2 mt-2">
+        <input type="text" class="form-control" style="width:200px;display:inline !important" name="searchQuery" placeholder="Search by Booking ID or Event Name or Venue" />
+        <button style="display:inline !important" type="submit" class="btn btn-success ms-2">Search</button>
+    </div>
+    
+</form>
 <!-- Booking List Table -->
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
+            <th>Booking ID</th>
             <th>Customer Name</th>
             <th>Event</th>
             <th>Venue</th>
@@ -22,6 +30,7 @@
             foreach (var booking in Model)
             {
                 <tr>
+                    <td>@booking.BookingId</td>
                     <td>@booking.Customer.FullName</td>
                     <td>@booking.Event.EventName</td>
                     <td>@booking.Venue.VenueName</td>
