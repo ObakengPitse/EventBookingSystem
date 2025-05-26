@@ -20,28 +20,38 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var venue in Model)
+        @if (Model != null && Model.Any())
         {
-            <tr>
-                <td>@venue.VenueName</td>
-                <td>@venue.Location</td>
-                <td>@venue.Capacity</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(venue.ImageUrl))
-                    {
-                        <img src="@venue.ImageUrl" alt="Venue Image" width="100" height="100" />
-                    }
-                    else
-                    {
-                        <span>No Image</span>
-                    }
-                </td>
-                <td>
-                    <a href="@Url.Action("Edit", "Venue", new { id = venue.VenueId })" class="btn btn-primary">Edit</a>
-                    <a href="@Url.Action("Delete", "Venue", new { id = venue.VenueId })" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
+            @foreach (var venue in Model)
+            {
+                <tr>
+                    <td>@venue.VenueName</td>
+                    <td>@venue.Location</td>
+                    <td>@venue.Capacity</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(venue.ImageUrl))
+                        {
+                            <img src="@venue.ImageUrl" alt="Venue Image" width="100" height="100" />
+                        }
+                        else
+                        {
+                            <span>No Image</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Edit", "Venue", new { id = venue.VenueId })" class="btn btn-primary">Edit</a>
+                        <a href="@Url.Action("Delete", "Venue", new { id = venue.VenueId })" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
         }
+		else
+		{
+			<tr>
+				<td colspan="5" class="text-center">No venues found.</td>
+			</tr>
+		}
+
     </tbody>
 </table>
 

@@ -5,6 +5,7 @@
     <thead>
         <tr>
             <th>Booking ID</th>
+            <th>Customer Nmae</th>
             <th>Event</th>
             <th>Venue</th>
             <th>Booked On</th>
@@ -17,6 +18,7 @@
             {
                 <tr>
                     <td>@booking.BookingId</td>
+					<td>@booking.Customer.FullName</td>
                     <td>@booking.Event.EventName</td>
                     <td>@booking.Venue.VenueName</td>
                     <td>@booking.BookingDate.ToString("dd/MM/yyyy")</td>
@@ -31,3 +33,4 @@
         }
     </tbody>
 </table>
+<a asp-action="Index" class="btn btn-secondary mt-2">Cancel</a>

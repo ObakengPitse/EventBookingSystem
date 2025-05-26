@@ -1,5 +1,7 @@
 using EventBookingSystem.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext")));
+
+
+builder.Services.AddSingleton<BlobStorageService>(provider =>
+{
+    var config = provider.GetRequiredService<IConfiguration>();
+    var connStr = config.GetConnectionString("AzureBlobStorage");
+    return new BlobStorageService(connStr);
+});
 
 var app = builder.Build();
 

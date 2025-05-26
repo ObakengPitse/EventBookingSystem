@@ -30,9 +30,11 @@ public class BookingController : Controller
         var results = await _context.Booking
             .Include(b => b.Venue)
             .Include(b => b.Event)
+            .Include(b => b.Customer)
             .Where(b => b.BookingId.ToString().Contains(searchQuery) ||
                         b.Event.EventName.Contains(searchQuery) ||
-                        b.Venue.VenueName.Contains(searchQuery))
+                        b.Venue.VenueName.Contains(searchQuery) ||
+                        b.Customer.FullName.Contains(searchQuery))
             .ToListAsync();
 
         return View(results);
