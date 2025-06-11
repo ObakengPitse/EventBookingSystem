@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EventBookingSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,6 +23,19 @@ namespace EventBookingSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Customer", x => x.CustomerId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventType",
+                columns: table => new
+                {
+                    EventTypeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventType", x => x.EventTypeId);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,16 +63,24 @@ namespace EventBookingSystem.Migrations
                     VenueId = table.Column<int>(type: "int", nullable: false),
                     EventName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EventDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EventTypeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Event", x => x.EventId);
                     table.ForeignKey(
+                        name: "FK_Event_EventType_EventTypeId",
+                        column: x => x.EventTypeId,
+                        principalTable: "EventType",
+                        principalColumn: "EventTypeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Event_Venue_VenueId",
                         column: x => x.VenueId,
                         principalTable: "Venue",
-                        principalColumn: "VenueId");
+                        principalColumn: "VenueId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -80,17 +101,20 @@ namespace EventBookingSystem.Migrations
                         name: "FK_Booking_Customer_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customer",
-                        principalColumn: "CustomerId");
+                        principalColumn: "CustomerId",
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Booking_Event_EventId",
                         column: x => x.EventId,
                         principalTable: "Event",
-                        principalColumn: "EventId");
+                        principalColumn: "EventId",
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Booking_Venue_VenueId",
                         column: x => x.VenueId,
                         principalTable: "Venue",
-                        principalColumn: "VenueId");
+                        principalColumn: "VenueId",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(
@@ -109,6 +133,11 @@ namespace EventBookingSystem.Migrations
                 column: "VenueId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Event_EventTypeId",
+                table: "Event",
+                column: "EventTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Event_VenueId",
                 table: "Event",
                 column: "VenueId");
@@ -125,6 +154,9 @@ namespace EventBookingSystem.Migrations
 
             migrationBuilder.DropTable(
                 name: "Event");
+
+            migrationBuilder.DropTable(
+                name: "EventType");
 
             migrationBuilder.DropTable(
                 name: "Venue");

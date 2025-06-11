@@ -22,6 +22,8 @@
         <dd>@Model.EventDate.ToString("dd/MM/yyyy")</dd>
         <dt>Description</dt>
         <dd>@Model.Description</dd>
+        <dt>Event Type</dt>
+        <dd>@Model.EventType.Name</dd>
     </dl>
     <form asp-action="Delete" method="post">
         <input type="hidden" asp-for="EventId" />

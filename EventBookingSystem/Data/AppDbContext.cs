@@ -17,6 +17,7 @@ namespace EventBookingSystem.Data
         public DbSet<Event> Event { get; set; }
         public DbSet<Booking> Booking { get; set; }
         public DbSet<Customer> Customer { get; set; }
+        public DbSet<EventType> EventType { get; set; }
     }
 }
 

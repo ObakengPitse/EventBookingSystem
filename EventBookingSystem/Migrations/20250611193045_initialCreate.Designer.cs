@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventBookingSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250514181911_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250611193045_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,14 +96,36 @@ namespace EventBookingSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("EventTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int>("VenueId")
                         .HasColumnType("int");
 
                     b.HasKey("EventId");
 
+                    b.HasIndex("EventTypeId");
+
                     b.HasIndex("VenueId");
 
                     b.ToTable("Event");
+                });
+
+            modelBuilder.Entity("EventBookingSystem.Models.EventType", b =>
+                {
+                    b.Property<int>("EventTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventTypeId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EventTypeId");
+
+                    b.ToTable("EventType");
                 });
 
             modelBuilder.Entity("EventBookingSystem.Models.Venue", b =>
@@ -163,11 +185,19 @@ namespace EventBookingSystem.Migrations
 
             modelBuilder.Entity("EventBookingSystem.Models.Event", b =>
                 {
+                    b.HasOne("EventBookingSystem.Models.EventType", "EventType")
+                        .WithMany()
+                        .HasForeignKey("EventTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("EventBookingSystem.Models.Venue", "Venue")
                         .WithMany()
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("EventType");
 
                     b.Navigation("Venue");
                 });

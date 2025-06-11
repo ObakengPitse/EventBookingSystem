@@ -11,6 +11,7 @@
             <th>Event Date</th>
             <th>Venue Name</th>
             <th>Description</th>
+            <th>Event Type</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -25,6 +26,7 @@
                     <td>@item.EventDate.ToString("dd/MM/yyyy")</td>
                     <td>@item.Venue.VenueName</td>
                     <td>@item.Description</td>
+                    <td>@item.EventType.Name</td>
                     <td>
                         <a href="@Url.Action("Edit", "Event", new { id = item.EventId })" class="btn btn-primary">Edit</a>
                         <a href="@Url.Action("Delete", "Event", new { id = item.EventId })" class="btn btn-danger">Delete</a>

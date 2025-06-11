@@ -17,6 +17,9 @@ namespace EventBookingSystem.Models
         public required DateTime EventDate { get; set; }
         [Required]
         public required string Description { get; set; }
-      
+        public int EventTypeId { get; set; }
+        [ForeignKey("EventTypeId")]
+        public required EventType EventType { get; set; }
+        
     }
 }

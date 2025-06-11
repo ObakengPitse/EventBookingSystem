@@ -21,7 +21,9 @@ namespace EventBookingSystem.Controllers
         // GET: Events
         public async Task<IActionResult> Index()
         {
-            var events = await _context.Event.Include(e => e.Venue).ToListAsync();
+            var events = await _context.Event.Include(e => e.Venue).Include(e => e.EventType).ToListAsync();
+
+
             return View(events);
         }
 
@@ -29,12 +31,13 @@ namespace EventBookingSystem.Controllers
         public IActionResult Create()
         {
             ViewData["VenueId"] = new SelectList(_context.Venue, "VenueId", "VenueName");
+            ViewData["EventTypeId"] = new SelectList(_context.EventType, "EventTypeId", "Name");
             return View();
         }
 
         // POST: Events/Create
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("EventName,EventDate,Description,VenueId")] Event @event)
+        public async Task<IActionResult> Create([Bind("EventId,EventName,EventDate,Description,VenueId,EventTypeId")] Event @event)
         {
 
             _context.Add(@event);
@@ -59,13 +62,14 @@ namespace EventBookingSystem.Controllers
 
             // Populate the venue dropdown for the edit form
             ViewData["VenueId"] = new SelectList(_context.Venue, "VenueId", "VenueName", @event.VenueId);
+            ViewData["EventTypeId"] = new SelectList(_context.EventType, "EventTypeId", "Name", @event.EventTypeId);
             return View(@event);
         }
 
         // POST: Events/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EventId, EventName, EventDate, Description, VenueId")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("EventId, EventName, EventDate, Description, VenueId,EventTypeId")] Event @event)
         {
             if (id != @event.EventId)
             {
@@ -102,6 +106,7 @@ namespace EventBookingSystem.Controllers
 
             var @event = await _context.Event
                 .Include(e => e.Venue)
+                .Include(e => e.EventType)
                 .FirstOrDefaultAsync(m => m.EventId == id);
             if (@event == null)
             {
@@ -135,7 +140,8 @@ namespace EventBookingSystem.Controllers
                     // Using TempData to pass the error message to the view
                     TempData["ErrorMessage"] = "Cannot delete an event that is associated with an booking";
                     ViewData["VenueId"] = new SelectList(_context.Venue, "VenueId", "VenueName", @event.VenueId);
-                    
+                    ViewData["EventTypeId"] = new SelectList(_context.EventType, "EventTypeId", "Name", @event.EventTypeId);
+
                     return View(@event);
                 }
             }
