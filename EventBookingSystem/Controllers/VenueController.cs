@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace EventBookingSystem.Controllers
 {
@@ -12,6 +13,7 @@ namespace EventBookingSystem.Controllers
     {
         private readonly AppDbContext _context;
         private readonly BlobStorageService _blobStorageService;
+        private const string ContainerName = "images2";
 
         public VenueController(AppDbContext context, BlobStorageService blobStorageService)
         {
@@ -33,15 +35,20 @@ namespace EventBookingSystem.Controllers
 
         // POST: Venue/Create
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("VenueId,VenueName,Location,Capacity,ImageUrl")] Venue venue)
+        public async Task<IActionResult> Create([Bind("VenueId,VenueName,Location,Capacity")] Venue venue, IFormFile imageFile)
         {
-            if (ModelState.IsValid)
+            if (imageFile != null && imageFile.Length > 0)
             {
-                _context.Add(venue);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var blobName = $"{Guid.NewGuid()}_{imageFile.FileName}";
+                using (var stream = imageFile.OpenReadStream())
+                {
+                    await _blobStorageService.UploadFileAsync(ContainerName, blobName, stream);
+                }
+                venue.ImageUrl = $"https://imagesstorage100.blob.core.windows.net/{ContainerName}/{blobName}";
             }
-            return View(venue);
+            _context.Add(venue);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Venue/Edit/5
@@ -62,34 +69,48 @@ namespace EventBookingSystem.Controllers
 
         // POST: Venue/Edit/5
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("VenueId,VenueName,Location,Capacity,ImageUrl")] Venue venue)
+        public async Task<IActionResult> Edit(int id, [Bind("VenueId,VenueName,Location,Capacity,ImageUrl")] Venue venue, IFormFile imageFile)
         {
             if (id != venue.VenueId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                if (imageFile != null && imageFile.Length > 0)
                 {
-                    _context.Update(venue);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!VenueExists(venue.VenueId))
+                    // Optionally delete the old image
+                    if (!string.IsNullOrEmpty(venue.ImageUrl))
                     {
-                        return NotFound();
+                        var uri = new Uri(venue.ImageUrl);
+                        var oldBlobName = Path.GetFileName(uri.LocalPath);
+                        await _blobStorageService.DeleteFileAsync(ContainerName, oldBlobName);
                     }
-                    else
+
+                    var blobName = $"{Guid.NewGuid()}_{imageFile.FileName}";
+                    using (var stream = imageFile.OpenReadStream())
                     {
-                        throw;
+                        await _blobStorageService.UploadFileAsync(ContainerName, blobName, stream);
                     }
+                    venue.ImageUrl = $"https://imagesstorage100.blob.core.windows.net/{ContainerName}/{blobName}";
                 }
-                return RedirectToAction(nameof(Index));
+
+                _context.Update(venue);
+                await _context.SaveChangesAsync();
             }
-            return View(venue);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!VenueExists(venue.VenueId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Venues/Delete/5
@@ -137,10 +158,15 @@ namespace EventBookingSystem.Controllers
                     TempData["ErrorMessage"] = "Cannot delete a venue that is associated with an event";
                     return View(venue);
                 }
-            }
 
-            if (venue != null)
-            {
+                // Delete image from blob storage
+                if (!string.IsNullOrEmpty(venue.ImageUrl))
+                {
+                    var uri = new Uri(venue.ImageUrl);
+                    var blobName = Path.GetFileName(uri.LocalPath);
+                    await _blobStorageService.DeleteFileAsync(ContainerName, blobName);
+                }
+
                 _context.Venue.Remove(venue);
                 await _context.SaveChangesAsync();
             }
