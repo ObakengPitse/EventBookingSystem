@@ -20,6 +20,7 @@ public class BookingController : Controller
             .Include(b => b.Event)
             .Include(b => b.Venue)
             .Include(b => b.Customer)
+            .Include(b => b.Event.EventType)
             .ToListAsync();
         return View(bookings);
     }
@@ -31,10 +32,12 @@ public class BookingController : Controller
             .Include(b => b.Venue)
             .Include(b => b.Event)
             .Include(b => b.Customer)
+            .Include(b => b.Event.EventType)
             .Where(b => b.BookingId.ToString().Contains(searchQuery) ||
                         b.Event.EventName.Contains(searchQuery) ||
                         b.Venue.VenueName.Contains(searchQuery) ||
-                        b.Customer.FullName.Contains(searchQuery))
+                        b.Customer.FullName.Contains(searchQuery) ||
+                        b.Event.EventType.Name.Contains(searchQuery))
             .ToListAsync();
 
         return View(results);

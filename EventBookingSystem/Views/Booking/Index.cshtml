@@ -19,6 +19,7 @@
             <th>Booking ID</th>
             <th>Customer Name</th>
             <th>Event</th>
+			<th>Event Type</th>
             <th>Venue</th>
             <th>Booked On</th>
             <th>Actions</th>
@@ -33,6 +34,7 @@
                     <td>@booking.BookingId</td>
                     <td>@booking.Customer.FullName</td>
                     <td>@booking.Event.EventName</td>
+                    <td>@booking.Event.EventType.Name</td>
                     <td>@booking.Venue.VenueName</td>
                     <td>@booking.BookingDate.ToString("dd/MM/yyyy")</td>
                     <td>
