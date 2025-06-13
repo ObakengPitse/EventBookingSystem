@@ -14,14 +14,22 @@ public class BookingController : Controller
     }
 
     // GET: Bookings - Display list of bookings
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate)
     {
-        var bookings = await _context.Booking
+        var bookingsQuery = _context.Booking
             .Include(b => b.Event)
             .Include(b => b.Venue)
             .Include(b => b.Customer)
             .Include(b => b.Event.EventType)
-            .ToListAsync();
+            .AsQueryable();
+
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            bookingsQuery = bookingsQuery
+                .Where(b => b.BookingDate.Date >= startDate.Value.Date && b.BookingDate.Date <= endDate.Value.Date);
+        }
+
+        var bookings = await bookingsQuery.ToListAsync();
         return View(bookings);
     }
 
